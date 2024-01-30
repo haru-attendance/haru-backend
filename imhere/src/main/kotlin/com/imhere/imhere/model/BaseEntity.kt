@@ -5,15 +5,18 @@ import java.time.LocalDateTime
 
 @MappedSuperclass
 abstract class BaseEntity(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val id: Long = 0L,
 
-    @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+        @Column(name = "created_at", nullable = false)
+        val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "updated_at", nullable = false)
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+        @Column(name = "updated_at", nullable = false)
+        val updatedAt: LocalDateTime = LocalDateTime.now(),
+
+        @Column(nullable = false)
+        var isDeleted: Boolean = false
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
