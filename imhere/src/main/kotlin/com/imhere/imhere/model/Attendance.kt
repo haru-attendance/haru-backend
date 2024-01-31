@@ -13,5 +13,4 @@ class Attendance(
         foreignKey = ForeignKey(name = "fk_attendance_group_id_ref_group_id")
     )
     val group: Group,
-    id: Long = 0L
-) : BaseEntity(id)
+) : BaseEntity()

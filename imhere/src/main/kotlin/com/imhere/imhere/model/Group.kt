@@ -8,6 +8,11 @@ import jakarta.persistence.Table
 @Table(name = "groups")
 class Group(
     @Column(nullable = false, length = 30)
-    val name: String,
-    id: Long = 0L
-) : BaseEntity(id)
+    var name: String,
+) : BaseEntity() {
+    init {
+        if (name.length > 30) {
+            throw IllegalArgumentException("그룹의 이름은 30자를 넘기면 안된다")
+        }
+    }
+}
