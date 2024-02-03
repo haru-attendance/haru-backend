@@ -9,5 +9,5 @@ class Attendance(
     @Column(nullable = false)
     val date: LocalDate = LocalDate.now(),
     @Column(nullable = false)
-    val groupId: Long,
+    val clubId: Long,
 ) : BaseEntity()

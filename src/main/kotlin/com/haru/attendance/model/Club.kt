@@ -2,11 +2,9 @@ package com.haru.attendance.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.Table
 
 @Entity
-@Table(name = "groups")
-class Group(
+class Club(
     @Column(nullable = false, length = 30)
     var name: String,
 ) : BaseEntity() {
