@@ -7,9 +7,9 @@ import jakarta.persistence.Entity
 class Member(
     var userId: Long?,
     @Column(nullable = false)
-    val groupId: Long,
+    val clubId: Long,
     @Column(nullable = false)
-    var subGroupId: Long,
+    var unitId: Long,
     @Column(nullable = false)
     var name: String,
     @Column(nullable = false)
