@@ -3,7 +3,7 @@ package com.haru.attendance.model
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 
-class GroupTest : BehaviorSpec({
+class ClubTest : BehaviorSpec({
     given("이전에 그룹이 없을때 ") {
         `when`("그룹을 생성할 경우") {
             then("이름과 함께 그룹을 생성할 수 있다.") {
