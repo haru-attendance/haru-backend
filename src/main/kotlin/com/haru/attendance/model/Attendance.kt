@@ -7,7 +7,7 @@ import java.time.LocalDate
 @Entity
 class Attendance(
     @Column(nullable = false)
-    val date: LocalDate = LocalDate.now(),
+    var date: LocalDate = LocalDate.now(),
     @Column(nullable = false)
     val clubId: Long,
 ) : BaseEntity()

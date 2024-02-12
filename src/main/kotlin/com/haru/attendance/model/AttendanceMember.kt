@@ -13,7 +13,6 @@ class AttendanceMember(
     @ManyToOne(cascade = [CascadeType.ALL], optional = false)
     val attendance: Attendance,
     @Column(nullable = false)
-    val isAttended: Boolean,
-    @Column(nullable = false)
-    val attendedAt: LocalDateTime
+    var isAttended: Boolean = false,
+    val attendedAt: LocalDateTime? = null
 ) : BaseEntity()

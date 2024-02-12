@@ -12,5 +12,5 @@ class ClubUser(
     @Column(nullable = false)
     val userId: Long,
     @Enumerated(EnumType.STRING)
-    val role: Role
+    var role: Role
 ) : BaseEntity()
