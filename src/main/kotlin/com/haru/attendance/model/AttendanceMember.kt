@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 
 @Entity
 class AttendanceMember(
-    @Column(nullable = false)
-    val memberId: Long,
+    @ManyToOne(cascade = [CascadeType.ALL], optional = false)
+    val member: Member,
     @ManyToOne(cascade = [CascadeType.ALL], optional = false)
     val attendance: Attendance,
     @Column(nullable = false)
