@@ -2,12 +2,11 @@ package com.haru.attendance.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import java.time.LocalDate
 
 @Entity
-class Attendance(
+class ClubUserMember(
     @Column(nullable = false)
-    var date: LocalDate = LocalDate.now(),
+    val clubUserId: Long,
     @Column(nullable = false)
-    val clubId: Long,
+    val memberId: Long
 ) : BaseEntity()
