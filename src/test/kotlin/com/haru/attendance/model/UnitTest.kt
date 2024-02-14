@@ -1,5 +1,6 @@
 package com.haru.attendance.model
 
+import com.haru.attendance.exception.UnitServiceException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -13,7 +14,7 @@ class UnitTest : BehaviorSpec({
                 unit.name shouldBe "테스트"
             }
             then("유닛의 이름은 10자를 넘기면 예외를 발생한다.") {
-                shouldThrow<IllegalArgumentException> {
+                shouldThrow<UnitServiceException.UnitNameException> {
                     Unit("12345678901", 1)
                 }
             }
