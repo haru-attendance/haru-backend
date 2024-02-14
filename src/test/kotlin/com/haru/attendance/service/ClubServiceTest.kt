@@ -1,5 +1,6 @@
 package com.haru.attendance.service
 
+import com.haru.attendance.exception.ClubServiceException
 import com.haru.attendance.repository.ClubRepository
 import com.haru.attendance.service.dto.ClubSaveRequest
 import io.kotest.assertions.throwables.shouldThrow
@@ -35,7 +36,7 @@ class ClubServiceTest : BehaviorSpec({
 
         `when`("클럽 도메인으로 변경하면") {
             then("예외가 발생한다.") {
-                shouldThrow<IllegalArgumentException> {
+                shouldThrow<ClubServiceException.ClubNameException> {
                     clubService.save(clubSaveRequest)
                 }
             }
