@@ -1,6 +1,5 @@
 package com.haru.attendance.model
 
-import com.haru.attendance.exception.MemberServiceException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -18,7 +17,7 @@ class MemberTest : BehaviorSpec(
                 }
                 then("멤버의 이름은 30자를 넘기면 예외를 발생한다.") {
                     val unit = Unit("테스트", 1)
-                    shouldThrow<MemberServiceException.MemberNameException> {
+                    shouldThrow<IllegalArgumentException> {
                         Member(1, "12345678901234567890121234567890123456789012", unit)
                     }
                 }
@@ -35,7 +34,7 @@ class MemberTest : BehaviorSpec(
                 then("멤버의 이름은 30자를 넘기면 예외를 발생한다.") {
                     val unit = Unit("테스트", 1)
                     val member = Member(1, "echo", unit)
-                    shouldThrow<MemberServiceException.MemberNameException> {
+                    shouldThrow<IllegalArgumentException> {
                         member.updateName("12345678901234567890121234567890123456789012")
                     }
                 }

@@ -1,6 +1,5 @@
 package com.haru.attendance.model
 
-import com.haru.attendance.exception.MemberServiceException
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.ManyToOne
@@ -24,7 +23,7 @@ class Member(
 
     private fun validateMemberName(name: String) {
         if (name.length > 30) {
-            throw MemberServiceException.MemberNameException(name)
+            throw IllegalArgumentException("멤버의 이름은 30자를 넘기면 안된다")
         }
     }
 

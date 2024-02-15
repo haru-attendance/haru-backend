@@ -1,6 +1,5 @@
 package com.haru.attendance.model
 
-import com.haru.attendance.exception.ClubServiceException
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 
@@ -19,7 +18,7 @@ class Club(
 
     private fun validateName(name: String) {
         if (name.length > 30) {
-            throw ClubServiceException.ClubNameException(name)
+            throw IllegalArgumentException("그룹의 이름은 30자를 넘기면 안된다")
         }
     }
 

@@ -1,6 +1,5 @@
 package com.haru.attendance.model
 
-import com.haru.attendance.exception.ClubServiceException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -13,7 +12,7 @@ class ClubTest : BehaviorSpec({
                 club.name shouldBe "그룹명"
             }
             then("그룹의 이름은 30자를 넘기면 예외를 발생한다.") {
-                shouldThrow<ClubServiceException.ClubNameException> {
+                shouldThrow<IllegalArgumentException> {
                     Club("12345678901234567890121234567890123456789012")
                 }
             }
@@ -28,7 +27,7 @@ class ClubTest : BehaviorSpec({
             }
             then("그룹의 이름은 30자를 넘기면 예외를 발생한다.") {
                 val club = Club("그룹명")
-                shouldThrow<ClubServiceException.ClubNameException> {
+                shouldThrow<IllegalArgumentException> {
                     club.updateName("12345678901234567890121234567890123456789012")
                 }
             }
