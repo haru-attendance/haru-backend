@@ -1,10 +1,13 @@
 package com.haru.attendance.service
 
 import com.haru.attendance.exception.ClubServiceException
+import com.haru.attendance.model.Club
 import com.haru.attendance.repository.ClubRepository
 import com.haru.attendance.service.dto.ClubSaveRequest
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.equality.shouldNotBeEqualToComparingFields
 import io.kotest.matchers.equals.shouldBeEqual
 import io.mockk.every
 import io.mockk.mockk
@@ -16,15 +19,13 @@ class ClubServiceTest : BehaviorSpec({
     given("클럽 생성 dto가 전달되고") {
         val clubName = "나이트 클럽"
         val clubSaveRequest = ClubSaveRequest(clubName)
+        val savedClub = clubSaveRequest.toEntity()
+        every { clubRepository.save(any()) } returns savedClub // 이미 지정된 객체를 전달해야 올바르게 동작
 
         `when`("클럽을 영속화하면") {
-            val savedClub = clubSaveRequest.toEntity()
-            every { clubRepository.save(any()) } returns savedClub // 이미 지정된 객체를 전달해야 올바르게 동작
+            val clubSaveResponse = clubService.save(clubSaveRequest)
 
             then("클럽이 저장된다.") {
-
-                val clubSaveResponse = clubService.save(clubSaveRequest)
-
                 clubSaveResponse.name shouldBeEqual savedClub.name
             }
         }
@@ -39,6 +40,19 @@ class ClubServiceTest : BehaviorSpec({
                 shouldThrow<ClubServiceException.ClubNameException> {
                     clubService.save(clubSaveRequest)
                 }
+            }
+        }
+    }
+
+    given("-") {
+        val clubs = listOf(Club("콩 클럽"), Club("에코 클럽"))
+        every { clubRepository.findAll() } returns clubs
+
+        `when`("-") {
+            val clubs = clubService.getAllClubs()
+
+            then("동아리 목록을 조회할 수 있다.") {
+                clubs shouldHaveSize 2
             }
         }
     }

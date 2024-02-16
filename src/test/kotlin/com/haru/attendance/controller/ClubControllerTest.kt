@@ -1,7 +1,7 @@
 package com.haru.attendance.controller
 
 import com.haru.attendance.service.dto.ClubSaveRequest
-import com.haru.attendance.service.dto.ClubSaveResponse
+import com.haru.attendance.service.dto.ClubResponse
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.equals.shouldBeEqual
@@ -31,7 +31,7 @@ class ClubControllerTest : BehaviorSpec() {
 
             `when`("post 요청을 보내면") {
                 val clubSaveRequest = ClubSaveRequest(clubName)
-                val response = restTemplate.postForEntity(url + port + path, clubSaveRequest, ClubSaveResponse::class.java)
+                val response = restTemplate.postForEntity(url + port + path, clubSaveRequest, ClubResponse::class.java)
 
                 then("club이 생성된다.") {
                     response.body!!.name shouldBeEqual clubName
@@ -48,7 +48,7 @@ class ClubControllerTest : BehaviorSpec() {
 
             `when`("post 요청을 보내면") {
                 val clubSaveRequest = ClubSaveRequest(clubName)
-                val response = restTemplate.postForEntity(url + port + path, clubSaveRequest, ClubSaveResponse::class.java)
+                val response = restTemplate.postForEntity(url + port + path, clubSaveRequest, ClubResponse::class.java)
 
                 then("404 예외가 발생한다.") {
                     // TODO: 커스텀 예외 구현
