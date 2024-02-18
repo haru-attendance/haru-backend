@@ -1,60 +1,56 @@
 package com.haru.attendance.controller
 
 import com.haru.attendance.service.dto.ClubSaveRequest
-import com.haru.attendance.service.dto.ClubResponse
-import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.extensions.spring.SpringExtension
-import io.kotest.matchers.equals.shouldBeEqual
-import io.kotest.matchers.longs.shouldBeGreaterThan
-import org.springframework.beans.factory.annotation.Autowired
+import io.restassured.http.ContentType
+import io.restassured.module.kotlin.extensions.Given
+import io.restassured.module.kotlin.extensions.Then
+import io.restassured.module.kotlin.extensions.When
+import org.hamcrest.Matchers
+import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ClubControllerTest : BehaviorSpec() {
+class ClubControllerTest {
 
     @LocalServerPort
     var port = 0
 
-    @Autowired
-    lateinit var restTemplate: TestRestTemplate
+    @Test
+    fun 사용자가_club_이름을_전달하고_post_요청을_보내면_club이_생성된다() {
+        val path = "/clubs"
+        val clubName = "나이트 클럽"
 
-    init {
-        extension(SpringExtension)
-
-        given("사용자가 /clubs 주소로 club 이름을 전달하고") {
-            val url = "http://localhost:"
-            val path = "/clubs"
-            val clubName = "나이트 클럽"
-
-            `when`("post 요청을 보내면") {
-                val clubSaveRequest = ClubSaveRequest(clubName)
-                val response = restTemplate.postForEntity(url + port + path, clubSaveRequest, ClubResponse::class.java)
-
-                then("club이 생성된다.") {
-                    response.body!!.name shouldBeEqual clubName
-                    response.body!!.id shouldBeGreaterThan 0L
-                    response.statusCode shouldBeEqual HttpStatus.CREATED
-                }
-            }
+        Given {
+            port(port)
+            contentType(ContentType.JSON)
+            body(ClubSaveRequest(clubName))
+        } When {
+            post(path)
+        } Then {
+            body(
+                    "id", Matchers.greaterThan(0),
+                    "name", Matchers.equalTo(clubName)
+            )
+            statusCode(HttpStatus.CREATED.value())
         }
+    }
 
-        given("사용자가 /clubs 주소로 30자 이상의 club 이름을 전달하고") {
-            val url = "http://localhost:"
-            val path = "/clubs"
-            val clubName = "1234567890123456789012345678901234567890"
+    @Test
+    fun 사용자가_30자가_넘는_club_이름을_전달하고_post_요청을_보내면_club이_생성된다() {
+        val path = "/clubs"
+        val clubName = "1234567890123456789012345678901234567890"
 
-            `when`("post 요청을 보내면") {
-                val clubSaveRequest = ClubSaveRequest(clubName)
-                val response = restTemplate.postForEntity(url + port + path, clubSaveRequest, ClubResponse::class.java)
-
-                then("404 예외가 발생한다.") {
-                    // TODO: 커스텀 예외 구현
-                    response.statusCode shouldBeEqual HttpStatus.INTERNAL_SERVER_ERROR
-                }
-            }
+        Given {
+            port(port)
+            contentType(ContentType.JSON)
+            body(ClubSaveRequest(clubName))
+        } When {
+            post(path)
+        } Then {
+            // TODO: 커스텀 예외 구현
+            statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
         }
     }
 }
