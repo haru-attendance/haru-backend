@@ -1,7 +1,10 @@
 package com.haru.attendance.controller
 
+import com.haru.attendance.service.dto.ClubResponse
+import com.haru.attendance.service.dto.ClubResponses
 import com.haru.attendance.service.dto.ClubSaveRequest
 import io.restassured.http.ContentType
+import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
@@ -18,27 +21,15 @@ class ClubControllerTest {
     var port = 0
 
     @Test
-    fun 사용자가_club_이름을_전달하고_post_요청을_보내면_club이_생성된다() {
+    fun `사용자가 club 이름을 전달하고 post 요청을 보내면 club이 생성된다`() {
         val path = "/clubs"
         val clubName = "나이트 클럽"
 
-        Given {
-            port(port)
-            contentType(ContentType.JSON)
-            body(ClubSaveRequest(clubName))
-        } When {
-            post(path)
-        } Then {
-            body(
-                    "id", Matchers.greaterThan(0),
-                    "name", Matchers.equalTo(clubName)
-            )
-            statusCode(HttpStatus.CREATED.value())
-        }
+        create_club(path, clubName)
     }
 
     @Test
-    fun 사용자가_30자가_넘는_club_이름을_전달하고_post_요청을_보내면_club이_생성된다() {
+    fun `사용자가 30자가 넘는 club 이름을 전달하고 post요청을 보내면 예외가 발생한다`() {
         val path = "/clubs"
         val clubName = "1234567890123456789012345678901234567890"
 
@@ -51,6 +42,46 @@ class ClubControllerTest {
         } Then {
             // TODO: 커스텀 예외 구현
             statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+        }
+    }
+
+    @Test
+    fun `사용자가 속해있는 club들의 이름을 조회할 수 있다`() {
+        val path = "/clubs"
+        val clubName = "나이트 클럽"
+
+        create_club(path, clubName)
+
+        Given {
+            port(port)
+            contentType(ContentType.JSON)
+        } When {
+            post(path)
+        } Then {
+            body(
+                    "clubs", Matchers.hasSize<Any>(1),
+                    "clubs.id", Matchers.greaterThan(0),
+                    "clubs.name", Matchers.equalTo(clubName)
+            )
+            statusCode(HttpStatus.CREATED.value())
+        }
+    }
+
+    private fun create_club(path: String, clubName: String): ClubResponse {
+        return Given {
+            port(port)
+            contentType(ContentType.JSON)
+            body(ClubSaveRequest(clubName))
+        } When {
+            post(path)
+        } Then {
+            body(
+                    "id", Matchers.greaterThan(0),
+                    "name", Matchers.equalTo(clubName)
+            )
+            statusCode(HttpStatus.CREATED.value())
+        } Extract {
+            response().body.`as`(ClubResponse::class.java)
         }
     }
 }
