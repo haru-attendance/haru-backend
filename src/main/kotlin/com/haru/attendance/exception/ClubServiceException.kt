@@ -16,4 +16,14 @@ abstract class ClubServiceException(
             val httpStatus = HttpStatus.BAD_REQUEST
         }
     }
+
+    class NonClubIdException(
+            clubId: Long
+    ) : ClubServiceException(PREFIX_MESSAGE + clubId, httpStatus) {
+
+        companion object {
+            const val PREFIX_MESSAGE = "전달받은 club ID가 없습니다. 현재 club ID: "
+            val httpStatus = HttpStatus.BAD_REQUEST
+        }
+    }
 }

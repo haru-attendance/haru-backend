@@ -1,7 +1,6 @@
 package com.haru.attendance.controller
 
 import com.haru.attendance.service.dto.ClubResponse
-import com.haru.attendance.service.dto.ClubResponses
 import com.haru.attendance.service.dto.ClubSaveRequest
 import io.restassured.http.ContentType
 import io.restassured.module.kotlin.extensions.Extract
@@ -13,8 +12,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
+import org.springframework.test.annotation.DirtiesContext
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ClubControllerTest {
 
     @LocalServerPort
@@ -56,14 +57,29 @@ class ClubControllerTest {
             port(port)
             contentType(ContentType.JSON)
         } When {
-            post(path)
+            get(path)
         } Then {
             body(
                     "clubs", Matchers.hasSize<Any>(1),
-                    "clubs.id", Matchers.greaterThan(0),
-                    "clubs.name", Matchers.equalTo(clubName)
+                    "clubs[0].id", Matchers.greaterThan(0),
+                    "clubs[0].name", Matchers.equalTo(clubName)
             )
-            statusCode(HttpStatus.CREATED.value())
+            statusCode(HttpStatus.OK.value())
+        }
+    }
+
+    @Test
+    fun `사용자가 존재하지_않는 club id를 조회하면 예외가 발생한다`() {
+        val path = "/clubs/1"
+
+        Given {
+            port(port)
+            contentType(ContentType.JSON)
+        } When {
+            get(path)
+        } Then {
+            // TODO: 커스텀 예외 처리 구현
+            statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
         }
     }
 

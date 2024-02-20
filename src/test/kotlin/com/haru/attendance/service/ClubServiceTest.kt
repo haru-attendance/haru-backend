@@ -7,10 +7,10 @@ import com.haru.attendance.service.dto.ClubSaveRequest
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.equality.shouldNotBeEqualToComparingFields
 import io.kotest.matchers.equals.shouldBeEqual
 import io.mockk.every
 import io.mockk.mockk
+import java.util.*
 
 class ClubServiceTest : BehaviorSpec({
     val clubRepository = mockk<ClubRepository>()
@@ -23,10 +23,10 @@ class ClubServiceTest : BehaviorSpec({
         every { clubRepository.save(any()) } returns savedClub // 이미 지정된 객체를 전달해야 올바르게 동작
 
         `when`("클럽을 영속화하면") {
-            val clubSaveResponse = clubService.save(clubSaveRequest)
+            val clubResponse = clubService.save(clubSaveRequest)
 
             then("클럽이 저장된다.") {
-                clubSaveResponse.name shouldBeEqual savedClub.name
+                clubResponse.name shouldBeEqual savedClub.name
             }
         }
     }
@@ -52,7 +52,34 @@ class ClubServiceTest : BehaviorSpec({
             val clubs = clubService.getAllClubs()
 
             then("동아리 목록을 조회할 수 있다.") {
-                clubs shouldHaveSize 2
+                clubs.clubs shouldHaveSize 2
+            }
+        }
+    }
+
+    given("동아리 번호가 주어지면") {
+        val club = Club("콩 클럽")
+        val clubId = 1L
+        every { clubRepository.findById(clubId) } returns Optional.of(club)
+
+        `when`("-") {
+            val clubResponse = clubService.getClubById(clubId)
+
+            then("해당 동아리 정보를 조회할 수 있다.") {
+                clubResponse.name shouldBeEqual club.name
+            }
+        }
+    }
+
+    given("존재하지 않는 동아리 번호가 주어지면") {
+        val clubId = 1L
+        every { clubRepository.findById(clubId) } returns Optional.empty()
+
+        `when`("-") {
+            then("예외가 발생한다.") {
+                shouldThrow<ClubServiceException.NonClubIdException> {
+                    clubService.getClubById(clubId)
+                }
             }
         }
     }
