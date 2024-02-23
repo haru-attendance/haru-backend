@@ -1,5 +1,6 @@
 package com.haru.attendance.controller
 
+import com.haru.attendance.service.dto.ClubChangeRequest
 import com.haru.attendance.service.dto.ClubResponse
 import com.haru.attendance.service.dto.ClubSaveRequest
 import io.restassured.http.ContentType
@@ -63,6 +64,28 @@ class ClubControllerTest {
                     "clubs", Matchers.hasSize<Any>(1),
                     "clubs[0].id", Matchers.greaterThan(0),
                     "clubs[0].name", Matchers.equalTo(clubName)
+            )
+            statusCode(HttpStatus.OK.value())
+        }
+    }
+
+    @Test
+    fun `사용자가 속해있는 클럽의 정보를 변경할 수 있다`() {
+        val path = "/clubs"
+        val clubName = "나이트 클럽"
+
+        val clubResponse = create_club(path, clubName)
+
+        Given {
+            port(port)
+            contentType(ContentType.JSON)
+            body(ClubChangeRequest(clubName))
+        } When {
+            put(path + "/" + clubResponse.id)
+        } Then {
+            body(
+                    "id", Matchers.greaterThan(0),
+                    "name", Matchers.equalTo(clubName)
             )
             statusCode(HttpStatus.OK.value())
         }

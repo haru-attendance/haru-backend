@@ -3,6 +3,7 @@ package com.haru.attendance.service
 import com.haru.attendance.exception.ClubServiceException
 import com.haru.attendance.model.Club
 import com.haru.attendance.repository.ClubRepository
+import com.haru.attendance.service.dto.ClubChangeRequest
 import com.haru.attendance.service.dto.ClubSaveRequest
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -57,13 +58,13 @@ class ClubServiceTest : BehaviorSpec({
         }
     }
 
-    given("동아리 번호가 주어지면") {
+    given("동아리 번호가 주어지고") {
         val club = Club("콩 클럽")
         val clubId = 1L
         every { clubRepository.findById(clubId) } returns Optional.of(club)
 
-        `when`("-") {
-            val clubResponse = clubService.getClubById(clubId)
+        `when`("동아리 목록을 조회하면") {
+            val clubResponse = clubService.getOneClub(clubId)
 
             then("해당 동아리 정보를 조회할 수 있다.") {
                 clubResponse.name shouldBeEqual club.name
@@ -71,14 +72,44 @@ class ClubServiceTest : BehaviorSpec({
         }
     }
 
-    given("존재하지 않는 동아리 번호가 주어지면") {
+    given("존재하지 않는 동아리 번호가 주어지고") {
         val clubId = 1L
         every { clubRepository.findById(clubId) } returns Optional.empty()
 
-        `when`("-") {
+        `when`("동아리를 조회하면") {
             then("예외가 발생한다.") {
                 shouldThrow<ClubServiceException.NonClubIdException> {
-                    clubService.getClubById(clubId)
+                    clubService.getOneClub(clubId)
+                }
+            }
+        }
+    }
+
+    given("이름을 변경할 동아리 번호와 이름이 주어지고") {
+        val clubId = 1L
+        val clubChangeRequest = ClubChangeRequest("에코 클럽")
+        val club = Club("콩 클럽")
+        every { clubRepository.findById(clubId) } returns Optional.of(club)
+
+        `when`("이름을 변경하면") {
+            val clubResponse = clubService.changeClub(clubId, clubChangeRequest)
+
+            then("해당 동아리 이름을 변경할 수 있다.") {
+                clubResponse.name shouldBeEqual clubChangeRequest.name
+            }
+        }
+    }
+
+    given("존재하지 않는 동아리 번호와 이름이 주어지고") {
+        val clubId = 1L
+        val clubChangeRequest = ClubChangeRequest("에코 클럽")
+        every { clubRepository.findById(clubId) } returns Optional.empty()
+
+        `when`("이름을 변경하면") {
+
+            then("예외가 발생한다.") {
+                shouldThrow<ClubServiceException.NonClubIdException> {
+                    clubService.changeClub(clubId, clubChangeRequest)
                 }
             }
         }
