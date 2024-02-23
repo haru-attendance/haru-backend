@@ -73,19 +73,41 @@ class ClubControllerTest {
     fun `사용자가 속해있는 클럽의 정보를 변경할 수 있다`() {
         val path = "/clubs"
         val clubName = "나이트 클럽"
+        val changedClubName = "굿모닝 클럽"
 
         val clubResponse = create_club(path, clubName)
 
         Given {
             port(port)
             contentType(ContentType.JSON)
-            body(ClubChangeRequest(clubName))
+            body(ClubChangeRequest(changedClubName))
         } When {
             put(path + "/" + clubResponse.id)
         } Then {
             body(
                     "id", Matchers.greaterThan(0),
-                    "name", Matchers.equalTo(clubName)
+                    "name", Matchers.equalTo(changedClubName)
+            )
+            statusCode(HttpStatus.OK.value())
+        }
+    }
+
+    @Test
+    fun `사용자가 속해있는 클럽을 하나 조회할 수 있다`() {
+        val path = "/clubs"
+        val clubName = "나이트 클럽"
+
+        val clubResponse = create_club(path, clubName)
+
+        Given {
+            port(port)
+            contentType(ContentType.JSON)
+        } When {
+            get(path + "/" + clubResponse.id)
+        } Then {
+            body(
+                    "id", Matchers.equalTo(clubResponse.id.toInt()),
+                    "name", Matchers.equalTo(clubResponse.name)
             )
             statusCode(HttpStatus.OK.value())
         }
@@ -100,6 +122,50 @@ class ClubControllerTest {
             contentType(ContentType.JSON)
         } When {
             get(path)
+        } Then {
+            // TODO: 커스텀 예외 처리 구현
+            statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+        }
+    }
+
+    @Test
+    fun `관리자는 클럽을 삭제할 수 있다`() {
+        val path = "/clubs"
+        val clubName = "나이트 클럽"
+
+        val clubResponse = create_club(path, clubName)
+
+        Given {
+            port(port)
+            contentType(ContentType.JSON)
+        } When {
+            delete(path + "/" + clubResponse.id)
+        } Then {
+            statusCode(HttpStatus.NO_CONTENT.value())
+        }
+    }
+
+    @Test
+    fun `삭제한 클럽은 조회를 할 수 없다`() {
+        val path = "/clubs"
+        val clubName = "나이트 클럽"
+
+        val clubResponse = create_club(path, clubName)
+
+        Given {
+            port(port)
+            contentType(ContentType.JSON)
+        } When {
+            delete(path + "/" + clubResponse.id)
+        } Then {
+            statusCode(HttpStatus.NO_CONTENT.value())
+        }
+
+        Given {
+            port(port)
+            contentType(ContentType.JSON)
+        } When {
+            get(path + "/" + clubResponse.id)
         } Then {
             // TODO: 커스텀 예외 처리 구현
             statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())

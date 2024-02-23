@@ -33,4 +33,10 @@ class ClubController(val clubService: ClubService) {
     fun changeClubInfo(@PathVariable clubId: Long, @RequestBody clubChangeRequest: ClubChangeRequest): ResponseEntity<ClubResponse> {
         return ResponseEntity.status(HttpStatus.OK).body(clubService.changeClub(clubId, clubChangeRequest))
     }
+
+    @DeleteMapping("/{clubId}")
+    fun deleteClub(@PathVariable clubId: Long): ResponseEntity<Unit> {
+        clubService.deleteClub(clubId)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
 }

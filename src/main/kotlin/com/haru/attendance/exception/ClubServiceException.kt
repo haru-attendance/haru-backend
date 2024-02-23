@@ -26,4 +26,14 @@ abstract class ClubServiceException(
             val httpStatus = HttpStatus.BAD_REQUEST
         }
     }
+
+    class DeletedClubException(
+            clubId: Long
+    ) : ClubServiceException(PREFIX_MESSAGE + clubId, httpStatus) {
+
+        companion object {
+            const val PREFIX_MESSAGE = "전달받은 club ID가 이미 삭제되었습니다. 현재 club ID"
+            val httpStatus = HttpStatus.BAD_REQUEST
+        }
+    }
 }

@@ -85,6 +85,21 @@ class ClubServiceTest : BehaviorSpec({
         }
     }
 
+    given("삭제한 동아리 번호가 주어지고") {
+        val clubId = 1L
+        val club = Club("콩 클럽")
+        club.delete()
+        every { clubRepository.findById(clubId) } returns Optional.of(club)
+
+        `when`("동아리를 조회하면") {
+            then("예외가 발생한다.") {
+                shouldThrow<ClubServiceException.DeletedClubException> {
+                    clubService.getOneClub(clubId)
+                }
+            }
+        }
+    }
+
     given("이름을 변경할 동아리 번호와 이름이 주어지고") {
         val clubId = 1L
         val clubChangeRequest = ClubChangeRequest("에코 클럽")
@@ -110,6 +125,53 @@ class ClubServiceTest : BehaviorSpec({
             then("예외가 발생한다.") {
                 shouldThrow<ClubServiceException.NonClubIdException> {
                     clubService.changeClub(clubId, clubChangeRequest)
+                }
+            }
+        }
+    }
+
+    given("삭제한 동아리 번호와 이름이 주어지고") {
+        val clubId = 1L
+        val clubChangeRequest = ClubChangeRequest("에코 클럽")
+        val club = Club("콩 클럽")
+        club.delete()
+        every { clubRepository.findById(clubId) } returns Optional.of(club)
+
+        `when`("이름을 변경하면") {
+
+            then("예외가 발생한다.") {
+                shouldThrow<ClubServiceException.DeletedClubException> {
+                    clubService.changeClub(clubId, clubChangeRequest)
+                }
+            }
+        }
+    }
+
+    given("클럽 아이디가 주어지고") {
+        val clubId = 1L
+        val club = Club("콩 클럽")
+        every { clubRepository.findById(clubId) } returns Optional.of(club)
+
+        `when`("해당 클럽을 삭제하면") {
+            clubService.deleteClub(clubId)
+
+            then("클럽의 deleted는 true가 된다.") {
+                club.isDeleted shouldBeEqual true
+            }
+        }
+    }
+
+    given("이미 삭제한 클럽 아이디가 주어지고") {
+        val clubId = 1L
+        val club = Club("콩 클럽")
+        club.delete()
+        every { clubRepository.findById(clubId) } returns Optional.of(club)
+
+        `when`("해당 클럽을 삭제하면") {
+
+            then("클럽의 deleted는 true가 된다.") {
+                shouldThrow<ClubServiceException.DeletedClubException> {
+                    clubService.deleteClub(clubId)
                 }
             }
         }
