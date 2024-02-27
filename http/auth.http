@@ -1,0 +1,30 @@
+### REGISTER
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "test",
+  "name": "test"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
+
+### LOGIN
+
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "test"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
+
+### LOGOUT
+POST {{host}}/auth/logout
