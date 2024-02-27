@@ -37,6 +37,9 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+    testImplementation("io.rest-assured:rest-assured:5.4.0")
+    testImplementation("io.rest-assured:kotlin-extensions:5.4.0")
 }
 
 tasks.withType<KotlinCompile> {
